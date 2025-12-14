@@ -37,6 +37,8 @@
 #include "units/length_ffi.hpp"
 #include "units/time_ffi.hpp"
 #include "units/angular_ffi.hpp"
+#include "units/mass_ffi.hpp"
+#include "units/power_ffi.hpp"
 #include "units/velocity_ffi.hpp"
 
 // User-defined literals

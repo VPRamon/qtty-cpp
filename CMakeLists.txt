@@ -109,8 +109,22 @@ if(DEFINED _qtty_rpath)
 endif()
 
 # Test executables with Google Test
-add_executable(test_ffi tests/test_ffi.cpp)
-target_link_libraries(test_ffi PRIVATE qtty_cpp GTest::gtest_main)
+set(TEST_FFI_SOURCES
+    tests/main.cpp
+    tests/fixtures.hpp
+    tests/test_length.cpp
+    tests/test_time.cpp
+    tests/test_angular.cpp
+    tests/test_mass.cpp
+    tests/test_power.cpp
+    tests/test_derived.cpp
+    tests/test_operations.cpp
+    tests/test_dimension_safety.cpp
+    tests/test_precision.cpp
+)
+
+add_executable(test_ffi ${TEST_FFI_SOURCES})
+target_link_libraries(test_ffi PRIVATE qtty_cpp GTest::gtest)
 if(DEFINED _qtty_rpath)
     set_target_properties(test_ffi PROPERTIES 
         BUILD_RPATH ${_qtty_rpath}

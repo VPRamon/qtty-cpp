@@ -18,19 +18,19 @@ Adding a new unit to qtty-cpp is a multi-step process that spans both the Rust q
 
 ```
 1. Modify Rust qtty-ffi
-   └─ Define new unit in Rust code
+   - Define new unit in Rust code
    
 2. Rebuild qtty-ffi
-   └─ Generate updated qtty_ffi.h with new unit IDs
+   - Generate updated qtty_ffi.h with new unit IDs
    
 3. Regenerate C++ wrappers
-   └─ Run gen_cpp_units.py to create C++ bindings
+   - Run gen_cpp_units.py to create C++ bindings
    
 4. Add tests
-   └─ Write Google Test cases for the new unit
+   - Write Google Test cases for the new unit
    
 5. Update documentation
-   └─ Document the new unit in README and API docs
+   - Document the new unit in README and API docs
 ```
 
 **Important**: This guide assumes you're adding units to an existing dimension (Length, Time, Angular, Mass, Power). Adding a completely new dimension requires more extensive changes.
@@ -606,10 +606,10 @@ For each new unit, add tests covering:
    - Default constructor (value should be 0.0)
 
 2. **Conversions**
-   - To base unit (e.g., Chain → Meter)
-   - From base unit (e.g., Meter → Chain)
+   - To base unit (e.g., Chain -> Meter)
+   - From base unit (e.g., Meter -> Chain)
    - To other units in same dimension
-   - Round-trip conversion (A → B → A)
+   - Round-trip conversion (A -> B -> A)
 
 3. **Arithmetic**
    - Addition with same unit

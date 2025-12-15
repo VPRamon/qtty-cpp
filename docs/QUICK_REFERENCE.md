@@ -115,12 +115,11 @@ git clone --recurse-submodules <repo-url>
 cd qtty-cpp
 
 # Build
-mkdir build && cd build
-cmake ..
-make -j$(nproc)
+cmake -S . -B build
+cmake --build build --parallel
 
 # Test
-ctest --output-on-failure
+ctest --test-dir build --output-on-failure
 ```
 
 ## CMake Integration
@@ -160,14 +159,18 @@ target_link_libraries(your_target PRIVATE qtty_cpp)
 Meter m(10.0);
 Second s(5.0);
 
-// ✅ OK: Same unit
+// OK: Same unit
 auto sum = m + m;
 
-// ❌ Compile error: Different types
+// Compile error: different types
 // auto bad = m + s;
 
-// ✅ OK: Explicit conversion first
-auto m_in_s_units = m.to<Second>();  // Throws at runtime
+// Convert to a compatible unit first
+Kilometer km = m.to<Kilometer>();
+auto sum2 = m + km.to<Meter>();
+
+// Runtime error: incompatible dimensions
+// Second s2 = m.to<Second>();  // Throws IncompatibleDimensionsError
 ```
 
 ## Exception Types
@@ -191,4 +194,4 @@ auto m_in_s_units = m.to<Second>();  // Throws at runtime
 
 ---
 
-**Need more details?** See [Documentation Index](README.md)
+See `docs/README.md` for additional documentation.

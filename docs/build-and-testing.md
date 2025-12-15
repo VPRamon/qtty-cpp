@@ -58,34 +58,31 @@ git submodule update --init --recursive
 ### 2. Build
 
 ```bash
-mkdir build && cd build
-cmake ..
-make -j$(nproc)
+cmake -S . -B build
+cmake --build build --parallel
 ```
 
 On Windows with MSVC:
 
 ```cmd
-mkdir build
-cd build
-cmake ..
-cmake --build . --config Release
+cmake -S . -B build
+cmake --build build --config Release
 ```
 
 ### 3. Run Tests
 
 ```bash
 # Using CTest (recommended)
-ctest --output-on-failure
+ctest --test-dir build --output-on-failure
 
 # Or run test executable directly
-./test_ffi
+./build/test_ffi
 ```
 
 ### 4. Run Demo
 
 ```bash
-./demo
+./build/demo
 ```
 
 Expected output:
@@ -113,25 +110,25 @@ The build orchestrates three tools: Python, Cargo, and CMake. Understanding this
 
 ```
 Step 1: Header Generation
-├─ Python runs gen_cpp_units.py
-├─ Parses qtty/qtty-ffi/include/qtty_ffi.h
-├─ Generates include/qtty/units/*.hpp
-└─ Generates include/qtty/literals.hpp
+- Python runs gen_cpp_units.py
+- Parses qtty/qtty-ffi/include/qtty_ffi.h
+- Generates include/qtty/units/*.hpp
+- Generates include/qtty/literals.hpp
 
 Step 2: Rust Library Compilation
-├─ Cargo builds qtty-ffi crate
-├─ Output: qtty/target/release/libqtty_ffi.{so,dylib,dll}
-└─ Depends on Step 1 (CMake dependency)
+- Cargo builds qtty-ffi crate
+- Output: qtty/target/release/libqtty_ffi.{so,dylib,dll}
+- Depends on Step 1 (CMake dependency)
 
 Step 3: C++ Integration
-├─ CMake creates interface library qtty_cpp
-├─ Links against qtty_ffi
-├─ Sets include paths
-└─ Configures RPATH for runtime library location
+- CMake creates interface library qtty_cpp
+- Links against qtty_ffi
+- Sets include paths
+- Configures RPATH for runtime library location
 
 Step 4: Build Executables
-├─ demo executable
-└─ test_ffi executable (links Google Test)
+- demo executable
+- test_ffi executable (links Google Test)
 ```
 
 ### CMake Targets
@@ -158,20 +155,19 @@ After a successful build, the `build/` directory contains:
 
 ```
 build/
-├── demo                          # Demo executable
-├── test_ffi                      # Test executable
-├── lib/                          # (empty, INTERFACE library)
-└── _deps/
-    └── googletest-build/         # Google Test build artifacts
+  demo                        # Demo executable
+  test_ffi                    # Test executable
+  lib/                        # (empty, INTERFACE library)
+  _deps/googletest-build/     # Google Test build artifacts
 ```
 
 The Rust library is built in the submodule:
 
 ```
 qtty/target/release/
-├── libqtty_ffi.so    (Linux)
-├── libqtty_ffi.dylib (macOS)
-└── qtty_ffi.dll      (Windows)
+  libqtty_ffi.so    (Linux)
+  libqtty_ffi.dylib (macOS)
+  qtty_ffi.dll      (Windows)
 ```
 
 ## Running Tests
@@ -295,7 +291,7 @@ Tests length units including metric, imperial, and astronomical scales.
 - `MeterConstruction` - Constructor and literal creation
 - `MeterArithmetic` - Addition, subtraction, multiplication, division
 - `MeterComparison` - All comparison operators
-- `LengthUnitConversions` - Meter ↔ Kilometer, millimeter, inch, mile
+- `LengthUnitConversions` - Meter <-> Kilometer, millimeter, inch, mile
 - `AstronomicalLengthUnits` - AU, light-year, parsec conversions
 - `SmallLengthUnits` - Nanometer, micrometer conversions
 
@@ -322,7 +318,7 @@ Tests time units from nanoseconds to days.
 
 **Key Tests**:
 - `SecondConstruction` - Constructor and literal creation
-- `TimeUnitConversions` - Second ↔ Minute, Hour, Day
+- `TimeUnitConversions` - Second <-> Minute, Hour, Day
 - `SmallTimeUnits` - Millisecond, microsecond, nanosecond
 - `CompoundTimeOperations` - Arithmetic operations
 
@@ -332,7 +328,7 @@ Tests angular units including degrees, radians, arcminutes, and arcseconds.
 
 **Key Tests**:
 - `RadianConstruction` - Constructor and literal creation
-- `AngularConversions` - Radian ↔ Degree conversions
+- `AngularConversions` - Radian <-> Degree conversions
 - `ArcminArcSecConversions` - Arcminute and arcsecond conversions
 - `AngularArithmetic` - Addition and scalar operations
 
@@ -342,7 +338,7 @@ Tests mass units in metric and imperial systems.
 
 **Key Tests**:
 - `KilogramConstruction` - Constructor and literal creation
-- `MassUnitConversions` - Kilogram ↔ Gram, Ton, Pound
+- `MassUnitConversions` - Kilogram <-> Gram, Ton, Pound
 - `SmallMassUnits` - Milligram conversions
 - `MassComparison` - Comparison operators
 
@@ -352,7 +348,7 @@ Tests power units including watts and horsepower.
 
 **Key Tests**:
 - `WattConstruction` - Constructor and literal creation
-- `PowerUnitConversions` - Watt ↔ Kilowatt, Megawatt, Horsepower
+- `PowerUnitConversions` - Watt <-> Kilowatt, Megawatt, Horsepower
 - `PowerArithmetic` - Arithmetic operations
 - `PowerComparison` - Comparison operators
 
@@ -757,10 +753,10 @@ cmake --install .
 Installed files:
 ```
 <prefix>/include/qtty/
-├── qtty.hpp
-├── ffi_core.hpp
-├── literals.hpp
-└── units/*.hpp
+  qtty.hpp
+  ffi_core.hpp
+  literals.hpp
+  units/*.hpp
 
 <prefix>/include/qtty_ffi.h
 ```

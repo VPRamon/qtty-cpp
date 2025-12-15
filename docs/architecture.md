@@ -304,27 +304,27 @@ dimension_map = {
 ```
 
 Discriminant ranges encode dimensions:
-- 10000-19999 → Length
-- 20000-29999 → Time
-- 30000-39999 → Angle
-- 40000-49999 → Mass
-- 50000-59999 → Power
+- 10000-19999 -> Length
+- 20000-29999 -> Time
+- 30000-39999 -> Angle
+- 40000-49999 -> Mass
+- 50000-59999 -> Power
 
 #### Name Conversion
 
 **`to_pascal_case()`** (lines 54-56):
 Converts `UPPER_SNAKE_CASE` to `PascalCase`:
-- `KILOMETER` → `Kilometer`
-- `LIGHT_YEAR` → `LightYear`
+- `KILOMETER` -> `Kilometer`
+- `LIGHT_YEAR` -> `LightYear`
 
 #### Literal Suffix Handling
 
 **`make_literal_suffix()`** (lines 106-121):
 Converts unit symbols to valid C++ literal suffixes:
-- `m` → `_m`
-- `km/h` → `_km_per_h`
-- `°` → `_deg`
-- `µm` → `_um`
+- `m` -> `_m`
+- `km/h` -> `_km_per_h`
+- degree sign -> `_deg`
+- micrometer (um) -> `_um`
 
 **Collision Detection** (lines 131-142):
 The generator tracks used suffixes and skips duplicates, printing warnings:

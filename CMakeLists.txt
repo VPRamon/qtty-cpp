@@ -147,6 +147,47 @@ install(DIRECTORY ${QTTY_FFI_INCLUDE_DIR}/
     FILES_MATCHING PATTERN "*.h"
 )
 
+# Install the qtty_ffi shared library
+install(FILES ${QTTY_LIBRARY_PATH}
+    DESTINATION lib
+)
+
+# Install CMake config files for find_package support
+include(CMakePackageConfigHelpers)
+
+# Create the config file
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/qtty_cppConfig.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/qtty_cppConfig.cmake
+    INSTALL_DESTINATION lib/cmake/qtty_cpp
+)
+
+# Create the version file
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/qtty_cppConfigVersion.cmake
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
+
+# Install the config and version files
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/qtty_cppConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/qtty_cppConfigVersion.cmake
+    DESTINATION lib/cmake/qtty_cpp
+)
+
+# Export targets
+install(TARGETS qtty_cpp
+    EXPORT qtty_cppTargets
+    INCLUDES DESTINATION include
+)
+
+install(EXPORT qtty_cppTargets
+    FILE qtty_cppTargets.cmake
+    NAMESPACE qtty::
+    DESTINATION lib/cmake/qtty_cpp
+)
+
 # Generate unit files (if needed)
 add_custom_target(
     gen_units

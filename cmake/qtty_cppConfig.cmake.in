@@ -1,0 +1,11 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+# Include the targets file
+include("${CMAKE_CURRENT_LIST_DIR}/qtty_cppTargets.cmake")
+
+# Provide the qtty_ffi library location for runtime linking
+set(QTTY_FFI_LIBRARY "@PACKAGE_CMAKE_INSTALL_PREFIX@/lib/@CMAKE_SHARED_LIBRARY_PREFIX@qtty_ffi@CMAKE_SHARED_LIBRARY_SUFFIX@")
+
+check_required_components(qtty_cpp)

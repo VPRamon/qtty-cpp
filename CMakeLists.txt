@@ -13,6 +13,21 @@ set(QTTY_SUBMODULE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/qtty)
 set(QTTY_FFI_INCLUDE_DIR ${QTTY_SUBMODULE_DIR}/qtty-ffi/include)
 set(QTTY_ARTIFACT_DIR ${QTTY_SUBMODULE_DIR}/target/release)
 
+# Allow enabling Cargo features for qtty-ffi (e.g., serde)
+# Use a STRING cache var (not BOOL) so users can set: "serde", "", or custom lists.
+set(QTTY_FFI_FEATURES "serde" CACHE STRING "Cargo features for qtty-ffi (e.g., 'serde' or empty)")
+
+# Normalize feature args: treat OFF/FALSE/0 as empty; ON means default 'serde'.
+set(_QTTY_FEATURES_ARGS "")
+string(TOUPPER "${QTTY_FFI_FEATURES}" _QTTY_FEATURES_UP)
+if("${_QTTY_FEATURES_UP}" STREQUAL "OFF" OR "${_QTTY_FEATURES_UP}" STREQUAL "FALSE" OR "${_QTTY_FEATURES_UP}" STREQUAL "0")
+    # No features
+elseif("${_QTTY_FEATURES_UP}" STREQUAL "ON")
+    set(_QTTY_FEATURES_ARGS --features serde)
+elseif(NOT "${QTTY_FFI_FEATURES}" STREQUAL "")
+    set(_QTTY_FEATURES_ARGS --features ${QTTY_FFI_FEATURES})
+endif()
+
 # Platform-specific library paths
 if(APPLE)
     set(QTTY_LIBRARY_PATH ${QTTY_ARTIFACT_DIR}/libqtty_ffi.dylib)
@@ -52,7 +67,7 @@ add_custom_target(
 # Build qtty-ffi via Cargo
 add_custom_target(
     build_qtty_ffi
-    COMMAND ${CARGO_BIN} build -p qtty-ffi --release
+    COMMAND ${CARGO_BIN} build -p qtty-ffi --release ${_QTTY_FEATURES_ARGS}
     WORKING_DIRECTORY ${QTTY_SUBMODULE_DIR}
     BYPRODUCTS ${QTTY_LIBRARY_PATH}
     DEPENDS gen_cpp_units
@@ -76,6 +91,7 @@ target_include_directories(qtty_cpp INTERFACE
     $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(qtty_cpp INTERFACE qtty_ffi)
+add_dependencies(qtty_cpp build_qtty_ffi)
 
 # Set RPATH for runtime library location
 if(APPLE)
@@ -121,6 +137,7 @@ set(TEST_FFI_SOURCES
     tests/test_operations.cpp
     tests/test_dimension_safety.cpp
     tests/test_precision.cpp
+    tests/test_serialization.cpp
 )
 
 add_executable(test_ffi ${TEST_FFI_SOURCES})

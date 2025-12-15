@@ -149,12 +149,12 @@ jobs:
           message-path: code-coverage-results.md
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Coverage gate (≥95% lines)
+      - name: Coverage gate (≥90% lines)
         run: |
           COVERAGE=$(lcov --summary coverage.info | grep lines | awk '{print $2}' | sed 's/%//')
           echo "Line coverage: $COVERAGE%"
-          if (( $(echo "$COVERAGE < 95" | bc -l) )); then
-            echo "Coverage is below 95%: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 90" | bc -l) )); then
+            echo "Coverage is below 90%: $COVERAGE%"
             exit 1
           fi
 

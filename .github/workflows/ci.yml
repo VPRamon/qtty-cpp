@@ -116,7 +116,9 @@ jobs:
       - name: Generate coverage data
         run: |
           lcov --capture --directory build --output-file coverage.info --ignore-errors mismatch
-          lcov --remove coverage.info '/usr/*' '*/tests/*' '*/build/*' '*/qtty/*' --output-file coverage.info
+          # Exclude system, tests, and only the top-level Rust workspace folder.
+          # Do NOT exclude include/qtty (our C++ headers), which caused empty reports.
+          lcov --remove coverage.info '/usr/*' '*/tests/*' '*/build/*' "${GITHUB_WORKSPACE}/qtty/*" --output-file coverage.info --ignore-errors empty
           lcov --list coverage.info
 
       - name: Generate HTML coverage report
